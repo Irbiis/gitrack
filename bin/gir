@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo -n "$(basename $0): "
+
+# Check to see if LOGS_DIR is set
+if [[ ! -n $LOGS_DIR ]] ; then
+  ! echo -e "${ERROR_RED}*** Please set \$LOGS_DIR --> shared logs directory${NC}"
+  exit
+else
+  logFile=$LOGS_DIR/gir-git_record
+  touch $logFile
+fi
+
+gitTop=$(git rev-parse --show-toplevel 2> /dev/null)
+
+if [[ "x$gitTop" != "x" ]] ; then
+  # this is a git directory!
+  grep "$gitTop" $logFile &> /dev/null
+  if [[ $? -eq 1 ]] ; then
+    gitURL=$(grep "url" $gitTop/.git/config | awk -F" = " '{print $2}')
+    if [[ "x$gitURL" != "x" ]] ; then
+      echo "$(echo $gitURL | awk '{print $1}') $gitTop" >> $logFile
+      echo -e "${BLUE_BRIGHT}$(basename $gitTop)${NC}"
+    else
+      echo -e "${YELLOW}$(basename $gitTop) (not recorded: no URL)${NC}" 
+    fi
+  else
+    echo -e "${GREEN}$(basename $gitTop)${NC}"
+  fi
+else
+  ! echo -e "${ERROR_RED}*** not GIT: $PWD${NC}"
+fi
+
+
+  

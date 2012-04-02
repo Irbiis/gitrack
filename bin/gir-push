@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "$(basename $0): "
+
+# necessary to get profile support (__git_ps1 is stored in there)
+source $HOME/.profile
+source $HOME/.functions
+
+# Check to see if LOGS_DIR is set
+if [[ ! -n $LOGS_DIR ]] ; then
+  ! echo -e "${ERROR_RED}*** Please set \$LOGS_DIR --> shared logs directory${NC}"
+  exit
+else
+  logFile=$LOGS_DIR/gir-git_record
+fi
+
+
+pushd . > /dev/null
+i=0
+while read line ; do
+  echo "-----------"
+
+  url=$(echo $line | awk '{print $1}')
+  direc=$(echo $line | awk '{print $2}')
+
+  header=${direc##*/}
+  direc=${direc%/*}
+
+  # echo -e "${BLUE_BRIGHT}$url ${GREEN}${direc} ${RED}$header${NC}"
+
+  mkdir -p $direc
+  cd $direc
+  echo -n "${header}: "
+  if [[ -d $header ]] ; then
+    echo "pushing ... "
+    cd $header
+    echo $(__git_ps1_colorize "%s")
+    { 
+      git push && echo -e "${GREEN}pushed${NC}" 
+    } || {
+      echo -e "${ERROR_RED}*** not pushed ($header)$NC"
+    }
+  else
+    echo -e "${ERROR_RED}*** no directory: $header$NC"
+  fi
+
+  echo "-----------"
+  let i++
+done < $logFile
+popd > /dev/null
