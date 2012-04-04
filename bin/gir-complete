@@ -120,7 +120,16 @@ function infohere(){
 url=$1
 header=$2
 pushd . > /dev/null
-ech "  - "
+cd $header
+branch=$(basename $(git symbolic-ref HEAD))
+# stats
+modified=$(git ls-files --modified | wc -l)
+others=$(git ls-files --others --exclude-standard | wc -l)
+staged=$(git status --porcelain )
+echo "  - branch: $branch"
+echo "  -status:"
+echo "    * modified: $modified"
+echo "    * others;   $others"
 popd > /dev/null
 }
 # pull function
