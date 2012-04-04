@@ -125,11 +125,30 @@ branch=$(basename $(git symbolic-ref HEAD))
 # stats
 modified=$(git ls-files --modified | wc -l)
 others=$(git ls-files --others --exclude-standard | wc -l)
-staged=$(git status --porcelain )
+staged=$(git diff --staged --name-status | wc -l)
+
+# setup color
+unset stagColor
+if [[ $staged -gt 0 ]] ; then
+  stagColor=$GREEN
+fi
+
+unset modColor
+if [[ $modified -gt 0 ]] ; then
+  modColor=$RED
+fi
+
+unset otherColor
+if [[ $others -gt 0 ]] ; then
+  otherColor=$ERROR_RED
+fi
+
+# print out the information
 echo "  - branch: $branch"
-echo "  -status:"
-echo "    * modified: $modified"
-echo "    * others;   $others"
+echo "  ${stagColor}${modColor}${otherColor}- status:${NC}"
+echo "    * ${stagColor}staged:   $staged${NC}"
+echo "    * ${modColor}modified: $modified${NC}"
+echo "    * ${otherColor}others:   $others${NC}"
 popd > /dev/null
 }
 # pull function
