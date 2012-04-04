@@ -269,7 +269,7 @@ pushd . > /dev/null
 echo "$(basename $0): $inputstr"
 i=0
 while read line ; do
-  echo "-----------"
+  echo "================="
 
   if [[ ! -n $OPT_S ]] ; then
     url=$(echo $line | awk '{print $1}')
