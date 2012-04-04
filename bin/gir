@@ -122,6 +122,9 @@ header=$2
 pushd . > /dev/null
 cd $header
 branch=$(basename $(git symbolic-ref HEAD))
+
+# TODO: add remote/commit information to this printout
+
 # stats
 modified=$(git ls-files --modified | wc -l)
 others=$(git ls-files --others --exclude-standard | wc -l)
