@@ -64,6 +64,7 @@ unset OPT_C
 unset OPT_I
 unset OPT_H
 unset OPT_L
+unset OPT_Q
 unset OPT_S
 }
 initialize
@@ -247,6 +248,9 @@ while getopts ":cihls:" opt; do
     l)
       errorNoLogs
       OPT_L=1
+      ;;
+    q)
+      OPT_Q=1
       ;;
     s)
       errorNoLogs
