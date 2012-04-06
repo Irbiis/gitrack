@@ -252,6 +252,8 @@ function runGitRecorderHere(){
 function upToDate(){
 if [[ -n $OPT_H && -n $OPT_L ]] ; then
   expected=2
+elif [[ ! -n $OPT_H && ! -n $OPT_L ]] ; then
+  expected=0
 else
   expected=1
 fi
@@ -340,9 +342,7 @@ while read line ; do
 
     # check if the given directory was already up to date
     upToDate $tmp
-    # echo ---- $header
-    # echo T: $totalcount
-    # echo N: $NotUpToDate
+
     if [[ $totalcount -gt 0 || -n $NotUpToDate  ]] ; then
       # if the test came up positive, print to screen
       cat $tmp 
