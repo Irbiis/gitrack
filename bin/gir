@@ -336,10 +336,13 @@ while read line ; do
 
     # TODO: checking upstream could negate the need for this if totalcount were 0
     # now run the desired functions
-    runGitRecorderHere > $tmp
+    runGitRecorderHere &> $tmp
 
     # check if the given directory was already up to date
     upToDate $tmp
+    # echo ---- $header
+    # echo T: $totalcount
+    # echo N: $NotUpToDate
     if [[ $totalcount -gt 0 || -n $NotUpToDate  ]] ; then
       # if the test came up positive, print to screen
       cat $tmp 
