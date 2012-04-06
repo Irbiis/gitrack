@@ -124,15 +124,33 @@ url=$1
 header=$2
 pushd . > /dev/null
 cd $header
-branch=$(basename $(git symbolic-ref HEAD))
 
-# TODO: add remote/commit information to this printout
+branch=$(expr $(git symbolic-ref HEAD) : 'refs/heads/\(.*\)')
+
+# update refs
+git remote update &> /dev/null
+# work out the current branch name
+[ -n "$branch" ] || die "You don't seem to be on a branch"
+# look up this branch in the configuration
+remote=$(git config branch.$branch.remote)
+remote_ref=$(git config branch.$branch.merge)
+# convert the remote ref into the tracking ref... this is a hack
+remote_branch=$(expr $remote_ref : 'refs/heads/\(.*\)')
+tracking_branch=refs/remotes/$remote/$remote_branch
+# now $tracking_branch should be the local ref tracking HEAD
+# unkown=$(git rev-list $tracking_branch..HEAD)
+tmpLR=$(mktemp -t $(basename $0).left-right.XXX)
+git rev-list --left-right $tracking_branch...HEAD &> $tmpLR
+numAhead=$(grep ">" $tmpLR | wc -l)
+numBehind=$(grep "<" $tmpLR | wc -l)
 
 # stats
 modified=$(git ls-files --modified | wc -l)
 others=$(git ls-files --others --exclude-standard | wc -l)
 staged=$(git diff --staged --name-status | wc -l)
-totalcount=$(($modified + $others + $staged ))
+
+# count total number of interesting status points
+totalcount=$(($modified + $others + $staged + $numAhead + $numBehind))
 
 # setup color
 unset stagColor
@@ -152,6 +170,12 @@ fi
 
 # print out the information
 echo "  - branch: $branch"
+if [[ $numBehind -gt 0 ]] ; then
+echo "    * ${RED}behind: ↓ $numBehind${NC}"
+fi
+if [[ $numAhead -gt 0 ]] ; then
+echo "    * ${BLUE_BRIGHT}ahead:  ↑ $numAhead${NC}"
+fi
 echo "  ${stagColor}${modColor}${otherColor}- status:${NC}"
 echo "    * ${stagColor}staged:   $staged${NC}"
 echo "    * ${modColor}modified: $modified${NC}"
