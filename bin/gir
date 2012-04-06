@@ -25,6 +25,7 @@ $(basename $0) Usage: gir [-c] [-ihl] [-s {directory}]
       -i         information
       -h         push (pull always performed before push if both selected)
       -l         pull (pull always performed before push if both selected)
+      -n         negate the -q option
       -q         quiet mode (only prints if action were performed. Also, implied '-i')
       -s         select only a single given directory
 
@@ -285,6 +286,9 @@ while getopts ":cihlqs:" opt; do
     l)
       errorNoLogs
       OPT_L=1
+      ;;
+    n)
+      unset OPT_Q
       ;;
     q)
       OPT_I=1
