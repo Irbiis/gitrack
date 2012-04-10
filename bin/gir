@@ -127,10 +127,11 @@ cd $header
 
 branch=$(expr $(git symbolic-ref HEAD) : 'refs/heads/\(.*\)')
 
+# Are we on a remote-tracking branch?
 # update refs
-git remote update &> /dev/null
+# git remote update &> /dev/null
 # work out the current branch name
-[ -n "$branch" ] || die "You don't seem to be on a branch"
+[ -n "$branch" ] || return "You don't seem to be on a branch"
 # look up this branch in the configuration
 remote=$(git config branch.$branch.remote)
 remote_ref=$(git config branch.$branch.merge)
