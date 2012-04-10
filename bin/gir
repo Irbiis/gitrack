@@ -123,15 +123,22 @@ function infohere(){
 url=$1
 header=$2
 pushd . > /dev/null
+mkdir -p $header
 cd $header
 
-branch=$(expr $(git symbolic-ref HEAD) : 'refs/heads/\(.*\)')
+if git rev-parse --git-dir &> /dev/null 
+then
+  branch=$(expr $(git symbolic-ref HEAD 2> /dev/null) : 'refs/heads/\(.*\)')
+else
+  ! echo ${RED}Not yet cloned${NC}
+  return
+fi
 
 # Are we on a remote-tracking branch?
 # update refs
 # git remote update &> /dev/null
 # work out the current branch name
-[ -n "$branch" ] || return "You don't seem to be on a branch"
+[ -n "$branch" ] || { echo  "You don't seem to be on a branch"; return ; }
 # look up this branch in the configuration
 remote=$(git config branch.$branch.remote)
 remote_ref=$(git config branch.$branch.merge)
