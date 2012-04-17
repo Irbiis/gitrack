@@ -206,6 +206,11 @@ if [[ -d $header ]] ; then
 else
   echo "<--- cloning ..."
   { 
+    echo "cloing?"
+    pwd
+    echo $header
+    exit
+
     git clone $url $header && echo "${BLUE_BRIGHT}cloned${NC}"  
   } || {
     echo "${ERROR_RED}*** not cloned ($header)$NC"
