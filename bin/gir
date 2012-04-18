@@ -122,8 +122,16 @@ done
 function infohere(){
 url=$1
 header=$2
+if [[ ! -d $header ]] ; then
+  ! echo "${RED}Not yet cloned${NC}"
+  totalcount=1
+  numBehind=1
+  # numBehind=1
+  return
+fi
 pushd . > /dev/null
 
+cd $header
 if git rev-parse --git-dir &> /dev/null 
 then
   branch=$(expr $(git symbolic-ref HEAD 2> /dev/null) : 'refs/heads/\(.*\)')
@@ -208,11 +216,6 @@ if [[ -d $header ]] ; then
 else
   echo "<--- cloning ..."
   { 
-    echo "cloing?"
-    pwd
-    echo $header
-    exit
-
     git clone $url $header && echo "${BLUE_BRIGHT}cloned${NC}"  
   } || {
     echo "${ERROR_RED}*** not cloned ($header)$NC"
@@ -276,6 +279,7 @@ function checkSOpt(){
 
 # total running checks
 function runGitRecorderHere(){
+echo $header
   echo "================="
   echo "${header}: "
   # informative output
