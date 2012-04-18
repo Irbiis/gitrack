@@ -143,7 +143,7 @@ fi
 
 # Are we on a remote-tracking branch?
 # update refs
-# git remote update &> /dev/null
+git remote update origin &> /dev/null
 # work out the current branch name
 [ -n "$branch" ] || { echo  "You don't seem to be on a branch"; return ; }
 # look up this branch in the configuration
