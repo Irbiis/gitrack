@@ -191,6 +191,9 @@ popd > /dev/null
 }
 # pull function
 function pullhere(){
+if [[ -n $OPT_I && $numBehind -eq 0 ]] ; then
+  return
+fi
 url=$1
 header=$2
 pushd . > /dev/null
@@ -219,6 +222,9 @@ fi
 }
 # push function
 function pushhere(){
+if [[ -n $OPT_I && $numAhead -eq 0 ]] ; then
+  return;
+fi
 url=$1
 header=$2
 pushd . > /dev/null
