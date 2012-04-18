@@ -291,24 +291,6 @@ function runGitRecorderHere(){
     pushhere $url $header
   fi
 }
-# check if the return was "up-to-date"
-function upToDate(){
-if [[ -n $OPT_H && -n $OPT_L ]] ; then
-  expected=2
-elif [[ ! -n $OPT_H && ! -n $OPT_L ]] ; then
-  expected=0
-else
-  expected=1
-fi
-tmpFile=$1
-lines=$(grep "up-to-date" $tmpFile 2> /dev/null | wc -l)
-if [[ $lines -eq $expected ]] ; then
-  unset NotUpToDate
-else
-  NotUpToDate=1
-fi
-}
-
 # parse the given options
 while getopts ":cihlqs:" opt; do
   case $opt in
@@ -386,10 +368,7 @@ while read line ; do
     # now run the desired functions
     runGitRecorderHere &> $tmp
 
-    # check if the given directory was already up to date
-    upToDate $tmp
-
-    if [[ $totalcount -gt 0 || -n $NotUpToDate  ]] ; then
+    if [[ $totalcount -gt 0 ]] ; then
       # if the test came up positive, print to screen
       cat $tmp 
     fi
