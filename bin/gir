@@ -279,7 +279,6 @@ function checkSOpt(){
 
 # total running checks
 function runGitRecorderHere(){
-echo $header
   echo "================="
   echo "${header}: "
   # informative output
