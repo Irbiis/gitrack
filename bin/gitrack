@@ -486,46 +486,49 @@ if [[ ! -n $OPT_QUIET ]] ; then
   echo "$(basename $0): $inputstr"
 fi
 i=0
-while read line ; do
+if [[ -n $OPT_INFO || -n $OPT_PUSH || -n $OPT_FECT || -n $OPT_MERGE ]] ; then
+  # something is actually being done
+  while read line ; do
 
-  if [[ ! -n $OPT_SELECT ]] ; then
-    url=$(echo $line | awk '{print $1}')
-    direc=$(echo $line | awk '{print $2}')
-  else
-    url=$S_URL
-    direc=$S_DIR
-  fi
-
-  header=$(basename $direc)
-  parent=${direc%/*}
-
-  # make sure that the parent directory exists
-  mkdir -p $parent
-  cd $parent
-
-  # run the recorder
-  if [[ -n $OPT_QUIET ]] ; then
-    tmp=$(mktemp -t $(basename $0).XXXX)
-
-    # gotta check info, if silent mode
-    infohere $url $header > $tmp
-
-    # now run the desired functions
-    runGitRecorderHere &> $tmp
-
-    if [[ $totalcount -gt 0 ]] ; then
-      # if the test came up positive, print to screen
-      cat $tmp 
+    if [[ ! -n $OPT_SELECT ]] ; then
+      url=$(echo $line | awk '{print $1}')
+      direc=$(echo $line | awk '{print $2}')
+    else
+      url=$S_URL
+      direc=$S_DIR
     fi
-    rm $tmp &> /dev/null
-  else
-    runGitRecorderHere 
-  fi
 
-  # we have already done the one directory; so leave!
-  if [[ -n $OPT_SELECT ]] ; then
-    break
-  fi
-  let i++
-done < $logFile
+    header=$(basename $direc)
+    parent=${direc%/*}
+
+    # make sure that the parent directory exists
+    mkdir -p $parent
+    cd $parent
+
+    # run the recorder
+      if [[ -n $OPT_QUIET ]] ; then
+        tmp=$(mktemp -t $(basename $0).XXXX)
+
+        # gotta check info, if silent mode
+        # infohere $url $header > $tmp
+
+        # now run the desired functions
+        runGitRecorderHere &> $tmp
+
+        if [[ $totalcount -gt 0 ]] ; then
+          # if the test came up positive, print to screen
+          cat $tmp 
+        fi
+        rm $tmp &> /dev/null
+      else
+        runGitRecorderHere 
+      fi
+
+    # we have already done the one directory; so leave!
+    if [[ -n $OPT_SELECT ]] ; then
+      break
+    fi
+    let i++
+  done < $logFile
+fi
 popd > /dev/null
