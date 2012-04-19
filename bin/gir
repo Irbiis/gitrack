@@ -80,19 +80,20 @@ fi
 
 function errorNoLogs(){
 if [[ -n $NO_LOG ]] ; then
-  echo "$(basename $0): No logs yet. Run 'gir -c' in relevant directories first" >&2 
+  echo "$(basename $0): No logs yet. Run '$(basename $0) -c' in parent directories first" >&2 
   printUsage 1
 fi
 }
 
 # initialize the variables
 function initialize(){
-unset OPT_C
-unset OPT_I
-unset OPT_H
-unset OPT_L
-unset OPT_Q
-unset OPT_S
+unset OPT_COLLECT
+unset OPT_INFO
+unset OPT_PUSH
+unset OPT_FECT
+unset OPT_MERGE
+unset OPT_QUIET
+unset OPT_SELECT
 }
 initialize
 
@@ -224,7 +225,7 @@ popd > /dev/null
 }
 # pull function
 function pullhere(){
-if [[ -n $OPT_I && $numBehind -eq 0 ]] ; then
+if [[ -n $OPT_INFO && $numBehind -eq 0 ]] ; then
   return
 fi
 url=$1
@@ -250,7 +251,7 @@ fi
 }
 # push function
 function pushhere(){
-if [[ -n $OPT_I && $numAhead -eq 0 ]] ; then
+if [[ -n $OPT_INFO && $numAhead -eq 0 ]] ; then
   return;
 fi
 url=$1
@@ -289,11 +290,11 @@ popd > /dev/null;
 }
 # check the selected directory
 function checkSOpt(){
-  if [[ "x$(grep $OPT_S $logFile)" != "x" && -d $OPT_S ]] ; then
-    S_URL=$(grep "$OPT_S" $logFile | awk '{print $1}')
-    S_DIR=$OPT_S
+  if [[ "x$(grep $OPT_SELECT $logFile)" != "x" && -d $OPT_SELECT ]] ; then
+    S_URL=$(grep "$OPT_SELECT" $logFile | awk '{print $1}')
+    S_DIR=$OPT_SELECT
   else
-    echo "$(basename $0): Not valid git-recording $OPT_S" >&2 
+    echo "$(basename $0): Not valid git-recording $OPT_SELECT" >&2 
     printUsage 1
   fi
   if [[ $(echo $S_URL | wc -w) -gt 1 ]] ; then
@@ -307,70 +308,93 @@ function runGitRecorderHere(){
   echo "================="
   echo "${header}: "
   # informative output
-  if [[ -n $OPT_I ]] ; then
+  if [[ -n $OPT_INFO ]] ; then
     infohere $url $header
   fi
   # pulling
-  if [[ -n $OPT_L ]] ; then
+  if [[ -n $OPT_FECT ]] ; then
     pullhere $url $header
   fi
   #pushing
-  if [[ -n $OPT_H ]] ; then
+  if [[ -n $OPT_PUSH ]] ; then
     pushhere $url $header
   fi
 }
-# parse the given options
-while getopts ":cihlqs:" opt; do
-  case $opt in
-    c)
-      OPT_C=1
+
+# split up the options
+shortOpts="cihplfmnqs:"
+longOpts="collect,help,info,license,push,fetch,merge,quiet,no-quiet,select:"
+if ! opts=$(getopt -o $shortOpts --long $longOpts  -- $@) ; then
+  printUsage 1
+fi
+set -- $opts
+
+# parse the given ooptions
+while [[ $# -gt 0 ]] ; do
+  case $1 in
+    -c | --collect )
+      OPT_COLLECT=1
       collect
+      shift 1
       exit 
       ;;
-    i)
-      errorNoLogs
-      OPT_I=1
-     ;;
-    h)
-      errorNoLogs
-      OPT_H=1
+    -h | --help ) 
+      printUsage 0 
       ;;
-    l)
+    -i | --info )
       errorNoLogs
-      OPT_L=1
+      OPT_INFO=1
+      shift 1
+     ;;
+   -p | --push )
+      errorNoLogs
+      OPT_PUSH=1
+      shift 1
+      ;;
+    -f | --fetch )
+      errorNoLogs
+      OPT_FECT=1
+      shift 1
       ;;
     -l | --license ) 
       printLicense
       ;;
-    q)
-      OPT_I=1
-      OPT_Q=1
-      ;;
-    s)
+    -m | --merge ) 
       errorNoLogs
-      OPT_S=$(abspath $OPTARG)
+      OPT_MERGE=1
+      shift 1
+      ;;
+    -n | --no-quiet )
+      unset OPT_QUIET
+      shift 1
+      ;;
+    -q | --quiet )
+      OPT_INFO=1
+      OPT_QUIET=1
+      shift 1
+      ;;
+    -s | --select )
+      errorNoLogs
+      OPT_SELECT=$(abspath $2)
+      shift 1
       checkSOpt
       ;;
-    \?)
-      echo "$(basename $0): Invalid option: -$OPTARG" >&2
-      printUsage 1
-      ;;
-    :)
-      echo "$(basename $0): Option -$OPTARG requires an argument." >&2
-      printUsage 1
+    *) 
+      # end of the line
+      break
       ;;
   esac
 done
 
 # perform the necessary functions 
 pushd . > /dev/null
-if [[ ! -n $OPT_Q ]] ; then 
+if [[ ! -n $OPT_QUIET ]] ; then 
   echo "$(basename $0): $inputstr"
 fi
 i=0
 while read line ; do
 
-  if [[ ! -n $OPT_S ]] ; then
+  if [[ ! -n $OPT_SELECT ]] ; then
     url=$(echo $line | awk '{print $1}')
     direc=$(echo $line | awk '{print $2}')
   else
@@ -386,7 +410,7 @@ while read line ; do
   cd $parent
 
   # run the recorder
-  if [[ -n $OPT_Q ]] ; then
+  if [[ -n $OPT_QUIET ]] ; then
     tmp=$(mktemp -t $(basename $0).XXXX)
 
     # gotta check info, if silent mode
@@ -406,7 +430,7 @@ while read line ; do
   fi
 
   # we have already done the one directory; so leave!
-  if [[ -n $OPT_S ]] ; then
+  if [[ -n $OPT_SELECT ]] ; then
     break
   fi
   let i++
