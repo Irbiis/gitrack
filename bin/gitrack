@@ -169,21 +169,24 @@ else
   return
 fi
 
-# Are we on a remote-tracking branch?
-# update refs
+# update references
 git remote update origin &> /dev/null
-# work out the current branch name
-[ -n "$branch" ] || { echo  "You don't seem to be on a branch"; return ; }
+if [[ ! -n "$branch" ]] ; then
+  echo  "You don't seem to be on a branch"
+  return
+fi
 # look up this branch in the configuration
 remote=$(git config branch.$branch.remote)
 remote_ref=$(git config branch.$branch.merge)
+
 # convert the remote ref into the tracking ref... this is a hack
 remote_branch=$(expr $remote_ref : 'refs/heads/\(.*\)')
 tracking_branch=refs/remotes/$remote/$remote_branch
-# now $tracking_branch should be the local ref tracking HEAD
-# unkown=$(git rev-list $tracking_branch..HEAD)
+
+# make a list of behind/ahead left/right sha's
 tmpLR=$(mktemp -t $(basename $0).left-right.XXX)
 git rev-list --left-right $tracking_branch...HEAD &> $tmpLR
+
 numAhead=$(grep ">" $tmpLR | wc -l)
 numBehind=$(grep "<" $tmpLR | wc -l)
 
