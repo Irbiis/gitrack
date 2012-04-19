@@ -24,7 +24,7 @@ inputstr="$@"
 # print the program usage and exit
 function printUsage(){
 cat - << EOF
-$(basename $0) Usage: $(basename $0) [-c] [-ihl] [-s {directory}]
+$(basename $0) Usage: $(basename $0) [-c] [-ciflmnpq] [-s {directory}]
   EXPLANATION
       $(basename $0) is a program designed to log and maintain several 
       git repositories collectively. This way you can push and pull from
@@ -41,10 +41,10 @@ $(basename $0) Usage: $(basename $0) [-c] [-ihl] [-s {directory}]
       -f   --fetch      fetch (clones the repository if not already)
       -l   --license    print license information
       -m   --merge      merge (clones the repository if not already)
-      -n   --no-quiet   negate the -q option
       -p   --push       push
-      -q   --quiet      quiet mode (only prints if action were performed. Uses '-i')
+      -q   --quiet      quiet mode [default]
       -s   --select     select only a single given directory
+      -v   --verbose    verbose mode
 
   ENVIRONMENT
       LOGS_DIR   A directory that holds log information. Must be an available environment variable
@@ -94,7 +94,7 @@ unset OPT_INFO
 unset OPT_PUSH
 unset OPT_FECT
 unset OPT_MERGE
-unset OPT_QUIET
+OPT_QUIET=1
 unset OPT_SELECT
 }
 initialize
@@ -357,8 +357,8 @@ function runGitRecorderHere(){
 }
 
 # split up the options
-shortOpts="cihplfmnqs:"
-longOpts="collect,help,info,license,push,fetch,merge,quiet,no-quiet,select:"
+shortOpts="cihplfmvqs:"
+longOpts="collect,help,info,license,push,fetch,merge,quiet,verbose,select:"
 if ! opts=$(getopt -o $shortOpts --long $longOpts  -- $@) ; then
   printUsage 1
 fi
@@ -399,7 +399,7 @@ while [[ $# -gt 0 ]] ; do
       OPT_MERGE=1
       shift 1
       ;;
-    -n | --no-quiet )
+    -v | --verbose )
       unset OPT_QUIET
       shift 1
       ;;
