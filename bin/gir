@@ -416,7 +416,6 @@ while read line ; do
     # gotta check info, if silent mode
     infohere $url $header > $tmp
 
-    # TODO: checking upstream could negate the need for this if totalcount were 0
     # now run the desired functions
     runGitRecorderHere &> $tmp
 
