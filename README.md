@@ -81,6 +81,7 @@ We can then check on our repositories from anywhere
     ================= 
     projcet1:              
       - branch: master
+        * behind: ↓ 2
       - status:       
         * staged:   3 
         * modified: 2 
