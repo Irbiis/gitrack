@@ -250,6 +250,32 @@ else
 fi
   popd > /dev/null
 }
+# pull function
+function mergehere(){
+if [[ -n $OPT_INFO && $numBehind -eq 0 ]] ; then
+  return
+fi
+url=$1
+header=$2
+pushd . > /dev/null
+if [[ -d $header ]] ; then
+  echo "<--- pulling ... "
+  cd $header
+  { 
+    git merge && echo "${GREEN}merged${NC}" 
+  } || {
+    echo "${ERROR_RED}*** not merged ($header)$NC"
+  }
+else
+  echo "<--- cloning ..."
+  { 
+    git clone $url $header && echo "${BLUE_BRIGHT}cloned${NC}"  
+  } || {
+    echo "${ERROR_RED}*** not cloned ($header)$NC"
+  }
+fi
+  popd > /dev/null
+}
 # push function
 function pushhere(){
 if [[ -n $OPT_INFO && $numAhead -eq 0 ]] ; then
@@ -315,6 +341,10 @@ function runGitRecorderHere(){
   # pulling
   if [[ -n $OPT_FECT ]] ; then
     fetchhere $url $header
+  fi
+  # merge
+  if [[ -n $OPT_MERGE ]] ; then
+    mergehere $url $header
   fi
   #pushing
   if [[ -n $OPT_PUSH ]] ; then
