@@ -79,19 +79,6 @@ if [ $# -eq 0 ] ; then
   printUsage 
 fi
 
-# Check to see if LOGS_DIR is set
-if [[ ! -n $LOGS_DIR ]] ; then
-  echo "$(basename $0): LOGS_DIR is not yet set!" >&2
-  printUsage 1
-else
-  logFile=$LOGS_DIR/gitrack_record
-  # check the size of the logfile
-  unset NO_LOG
-  if [[ $(cat $logFile 2> /dev/null | wc -l) -le 0 ]] ; then
-    NO_LOG=1
-  fi
-fi
-
 function errorNoLogs(){
 if [[ -n $NO_LOG ]] ; then
   echo "$(basename $0): No logs yet. Run '$(basename $0) -c' in parent directories first" >&2 
@@ -368,6 +355,21 @@ function runGitRecorderHere(){
   fi
 }
 
+# Check to see if LOGS_DIR is set
+function checkDir(){
+if [[ ! -n $LOGS_DIR ]] ; then
+  echo "$(basename $0): LOGS_DIR is not yet set!" >&2
+  printUsage 1
+else
+  logFile=$LOGS_DIR/gitrack_record
+  # check the size of the logfile
+  unset NO_LOG
+  if [[ $(cat $logFile 2> /dev/null | wc -l) -le 0 ]] ; then
+    NO_LOG=1
+  fi
+fi
+}
+
 # split up the options
 shortOpts="cihplLfmvqs:"
 longOpts="collect,help,info,list,LICENSE,license,push,fetch,merge,quiet,verbose,select:"
@@ -381,9 +383,8 @@ while [[ $# -gt 0 ]] ; do
   case $1 in
     -c | --collect )
       OPT_COLLECT=1
-      collect
       shift 1
-      exit 
+      break
       ;;
     -h | --help ) 
       printUsage 0 
@@ -432,6 +433,13 @@ while [[ $# -gt 0 ]] ; do
       ;;
   esac
 done
+checkDir
+
+# Run collection if requested
+if [[ -n $OPT_COLLECT ]] ; then
+  collect
+  exit 
+fi
 
 # perform the necessary functions 
 pushd . > /dev/null
