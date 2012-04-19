@@ -36,18 +36,19 @@ $(basename $0) Usage: $(basename $0) [-c] [-ihl] [-s {directory}]
       startup file before running.
 
   OPTIONS
-      -c         collect [run in a directory that contains one or more git repositories]
-      -i         information
-      -f         fetch (pull always performed before push if both selected)
-      -l         print license information
-      -m         merge 
-      -n         negate the -q option
-      -p         push (pull always performed before push if both selected)
-      -q         quiet mode (only prints if action were performed. Also, implied '-i')
-      -s         select only a single given directory
+      -c   --collect    collect [run in a directory that contains one or more git repositories]
+      -i   --info       print detailed information
+      -f   --fetch      fetch (clones the repository if not already)
+      -l   --license    print license information
+      -m   --merge      merge (clones the repository if not already)
+      -n   --no-quiet   negate the -q option
+      -p   --push       push
+      -q   --quiet      quiet mode (only prints if action were performed. Uses '-i')
+      -s   --select     select only a single given directory
 
   ENVIRONMENT
-      LOGS_DIR   A directory that holds log information
+      LOGS_DIR   A directory that holds log information. Must be an available environment variable
+      ~/.colors  Can be a file that holds shell variables with color names. If available, it is sourced.
 EOF
 
 exit $1
