@@ -88,6 +88,22 @@ We can then check on our repositories from anywhere
         * modified: 2 
         * others:   0 
 
+Then you can check on another collection of projects
+
+    $ gitrack -i --logs-file side-projects_record
+    ================= 
+    open-source:              
+      - branch: master
+      - status:       
+        * staged:   0 
+        * modified: 1 
+        * others:   0 
+
+Remember that, by default, gitrack operates in quiet mode, which only
+prints information if the repository doesn't show anything interesting
+(i.e. is the same as the origin). You can make it print everything with
+the `--verbose` flag
+
 There's a lot more you can do, too. And, if there's something you can't
 do, but want it to do? Have a go and fork the heck out of it!
 
