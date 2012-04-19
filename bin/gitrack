@@ -85,13 +85,6 @@ if [ $# -eq 0 ] ; then
   printUsage 
 fi
 
-function errorNoLogs(){
-if [[ -n $NO_LOG ]] ; then
-  echo "$(basename $0): No logs yet. Run '$(basename $0) -c' in parent directories first" >&2 
-  printUsage 1
-fi
-}
-
 # initialize the variables
 function initialize(){
 unset OPT_COLLECT
@@ -99,8 +92,9 @@ unset OPT_INFO
 unset OPT_PUSH
 unset OPT_FECT
 unset OPT_MERGE
-OPT_QUIET=1
+unset ERROR_IF_NO_LOGS
 unset OPT_SELECT
+OPT_QUIET=1
 }
 initialize
 
@@ -367,18 +361,21 @@ if [[ ! -n $LOGS_DIR ]] ; then
   echo "$(basename $0): LOGS_DIR is not yet set!" >&2
   printUsage 1
 else
-  logFile=$LOGS_DIR/gitrack_record
+  if [[ ! -n $logFile ]] ; then
+    logFile=$LOGS_DIR/gitrack_record
+  fi
   # check the size of the logfile
   unset NO_LOG
-  if [[ $(cat $logFile 2> /dev/null | wc -l) -le 0 ]] ; then
-    NO_LOG=1
+  if [[ -n $ERROR_IF_NO_LOGS && $(cat $logFile 2> /dev/null | wc -l) -le 0 ]] ; then
+    echo "$(basename $0): No logs yet. Run '$(basename $0) -c' in parent directories first" >&2 
+    printUsage 1
   fi
 fi
 }
 
 # split up the options
 shortOpts="cihplLfmvqs:"
-longOpts="collect,help,info,list,LICENSE,license,push,fetch,merge,quiet,verbose,select:"
+longOpts="collect,logs-dir:,logs-file:,help,info,list,LICENSE,license,push,fetch,merge,quiet,verbose,select:"
 if ! opts=$(getopt -o $shortOpts --long $longOpts  -- $@) ; then
   printUsage 1
 fi
@@ -387,6 +384,16 @@ set -- $opts
 # parse the given ooptions
 while [[ $# -gt 0 ]] ; do
   case $1 in
+    --logs-file )
+      logFile=${2#\'}
+      logFile=${logFile%\'}
+      shift 2
+      ;;
+    --logs-dir )
+      LOGS_DIR=${2#\'}
+      LOGS_DIR=${LOGS_DIR%\'}
+      shift 2
+      ;;
     -c | --collect )
       OPT_COLLECT=1
       shift 1
@@ -396,17 +403,17 @@ while [[ $# -gt 0 ]] ; do
       printUsage 0 
       ;;
     -i | --info )
-      errorNoLogs
+      ERROR_IF_NO_LOGS=1
       OPT_INFO=1
       shift 1
      ;;
    -p | --push )
-      errorNoLogs
+      ERROR_IF_NO_LOGS=1
       OPT_PUSH=1
       shift 1
       ;;
     -f | --fetch )
-      errorNoLogs
+      ERROR_IF_NO_LOGS=1
       OPT_FECT=1
       shift 1
       ;;
@@ -414,7 +421,7 @@ while [[ $# -gt 0 ]] ; do
       printLicense
       ;;
     -m | --merge )  compared to origin
-      errorNoLogs
+      ERROR_IF_NO_LOGS=1
       OPT_MERGE=1
       shift 1
       ;;
@@ -428,10 +435,11 @@ while [[ $# -gt 0 ]] ; do
       shift 1
       ;;
     -s | --select )
-      errorNoLogs
-      OPT_SELECT=$(abspath $2)
-      shift 1
-      checkSOpt
+      ERROR_IF_NO_LOGS=1
+      OPT_SELECT=${2#\'}
+      OPT_SELECT=${OPT_SELECT%\'}
+      OPT_SELECT=$(abspath $OPT_SELECT)
+      shift 2
       ;;
     *) 
       # end of the line
@@ -445,6 +453,11 @@ checkDir
 if [[ -n $OPT_COLLECT ]] ; then
   collect
   exit 
+fi
+
+# Check if the selected directory is collected
+if [[ -n $OPT_SELECT ]] ; then
+  checkSOpt
 fi
 
 # perform the necessary functions 
