@@ -70,7 +70,7 @@ First, collect all of our git repositories into gitrack:
 We can then check on our repositories from anywhere
 
     $ cd /somewhere/else
-    $ gitrack
+    $ gitrack -i
     ================= 
     major-project:              
       - branch: master
