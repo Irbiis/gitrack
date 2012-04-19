@@ -62,7 +62,7 @@ Consider the following directory tree
 First, collect all of our git repositories into gitrack:
 
     $ cd /some/path/dev
-    $ gitrack --colect
+    $ gitrack --collect
     gitrack: collect
     new > major-project
     new > project1
