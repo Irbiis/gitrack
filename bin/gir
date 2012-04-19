@@ -39,23 +39,26 @@ $(basename $0) Usage: gir [-c] [-ihl] [-s {directory}]
       -c         collect [run in a directory that contains one or more git repositories]
       -i         information
       -h         push (pull always performed before push if both selected)
-      -l         pull (pull always performed before push if both selected)
+      -f         pull (pull always performed before push if both selected)
+      -l         print license information
       -n         negate the -q option
       -q         quiet mode (only prints if action were performed. Also, implied '-i')
       -s         select only a single given directory
 
   ENVIRONMENT
       LOGS_DIR   A directory that holds log information
-
-  LICENSE
-
-      GIR  Copyright (C) 2012 Derek Ashley Thomas
-      This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-      This is free software, and you are welcome to redistribute it
-      under certain conditions; type `show c' for details.
 EOF
 
 exit $1
+}
+function printLicense(){
+cat - << EOF
+      GIR  Copyright (C) 2012 Derek Ashley Thomas
+      This program comes with ABSOLUTELY NO WARRANTY; for details run '$(basename $0) -l'.
+      This is free software, and you are welcome to redistribute it
+      under certain conditions; navigate to <http://www.gnu.org/licenses/gpl.html> for conditions.
+EOF
+exit 
 }
 if [ $# -eq 0 ] ; then
   #if no arguments supplied, print the usage
@@ -336,8 +339,8 @@ while getopts ":cihlqs:" opt; do
       errorNoLogs
       OPT_L=1
       ;;
-    n)
-      unset OPT_Q
+    -l | --license ) 
+      printLicense
       ;;
     q)
       OPT_I=1
