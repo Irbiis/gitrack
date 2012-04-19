@@ -24,28 +24,34 @@ inputstr="$@"
 # print the program usage and exit
 function printUsage(){
 cat - << EOF
-$(basename $0) Usage: $(basename $0) [-c] [-ciflmnpq] [-s {directory}]
+$(basename $0) Usage: $(basename $0) [--logs-dir {directory}] [--logs-file {file-name}]
+                       [-c] [-iflLmpqv] [-s {directory}]
   EXPLANATION
-      $(basename $0) is a program designed to log and maintain several 
-      git repositories collectively. This way you can push and pull from
-      multiple repos in a row for several unrelated projects. It also makes
-      it possible to share/sync multiple repos accross multiple computers 
-      quickly. A single log file is created for this: \$LOGS_DIR/gitrack_record.
-      
+      $(basename $0) is a program designed to log and maintain several
+      git repositories collectively. This way you can push, fetch, and
+      merge from multiple repositories in a row for several unrelated
+      projects. It also makes it possible to share/sync multiple repos
+      accross multiple computers quickly. A single log file is created
+      for this: '\$LOGS_DIR/gitrack_record' [by default].
+
       Make sure that LOGS_DIR is an environment variable set your shell
-      startup file before running.
+      startup file before running. You could also specify this directory
+      by using the '--logs-dir' option.
 
   OPTIONS
-      -c   --collect    collect [run in a directory that contains one or more git repositories]
-      -i   --info       print detailed information
-      -f   --fetch      fetch (clones the repository if not already)
-      -l   --list       list all of the tracked repositories
-      -L   --LICENSE    print license information
-      -m   --merge      merge (clones the repository if not already)
-      -p   --push       push
-      -q   --quiet      quiet mode [default]
-      -s   --select     select only a single given directory
-      -v   --verbose    verbose mode
+      -c   --collect      collect [run in a directory that contains one or more git repositories]
+      -i   --info         print detailed information
+      -f   --fetch        fetch (clones the repository if not already)
+      -l   --list         list all of the tracked repositories
+      -L   --LICENSE      print license information
+      -m   --merge        merge (clones the repository if not already)
+      -p   --push         push
+      -q   --quiet        quiet mode [default]
+      -s   --select       select only a single given directory
+      -v   --verbose      verbose mode
+
+      --logs-dir={dir}    override LOGS_DIR environment variable
+      --logs-file={file}  specify the log file to read from
 
   ENVIRONMENT
       LOGS_DIR   A directory that holds log information. Must be an available environment variable
