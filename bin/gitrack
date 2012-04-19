@@ -61,6 +61,7 @@ EOF
 
 exit $1
 }
+[ $# -eq 0 ] && printUsage
 function printLicense(){
 cat - << EOF
 gitrack: keep track of multiple git repositories and projects with one command!
@@ -86,12 +87,21 @@ if [ $# -eq 0 ] ; then
   printUsage 
 fi
 
+# print a readable list of our tracked repositories
+function printList(){
+printf "%-50s %-50s\n" "repository-directory" "origin-URL"
+printf "%-50s %-50s\n" "--------------------" "----------"
+cat $logFile | awk '{printf "%-50s %-50s\n",$2,$2}'
+
+}
+
 # initialize the variables
 function initialize(){
 unset OPT_COLLECT
 unset OPT_INFO
 unset OPT_PUSH
 unset OPT_FECT
+unset OPT_LIST
 unset OPT_MERGE
 unset ERROR_IF_NO_LOGS
 unset OPT_SELECT
@@ -408,6 +418,10 @@ while [[ $# -gt 0 ]] ; do
       OPT_INFO=1
       shift 1
      ;;
+   -l | --list )
+     OPT_LIST=1
+     shift 1
+     ;;
    -p | --push )
       ERROR_IF_NO_LOGS=1
       OPT_PUSH=1
@@ -459,6 +473,11 @@ fi
 # Check if the selected directory is collected
 if [[ -n $OPT_SELECT ]] ; then
   checkSOpt
+fi
+
+# print a list of all repositories
+if [[ -n $OPT_LIST ]] ; then
+  printList
 fi
 
 # perform the necessary functions 
