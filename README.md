@@ -8,8 +8,7 @@ all at once, now you can! Now you can know right away how many commits
 ahead/behind your local copy is and handle it without going too far away
 from your origin.
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-# Available Options
+## Available Options
 
 There are several options currently available, and hopefully it can grow
 from here.
