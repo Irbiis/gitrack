@@ -39,7 +39,8 @@ $(basename $0) Usage: $(basename $0) [-c] [-ciflmnpq] [-s {directory}]
       -c   --collect    collect [run in a directory that contains one or more git repositories]
       -i   --info       print detailed information
       -f   --fetch      fetch (clones the repository if not already)
-      -l   --license    print license information
+      -l   --list       list all of the tracked repositories
+      -L   --LICENSE    print license information
       -m   --merge      merge (clones the repository if not already)
       -p   --push       push
       -q   --quiet      quiet mode [default]
@@ -55,10 +56,21 @@ exit $1
 }
 function printLicense(){
 cat - << EOF
-      gitrack  Copyright (C) 2012 Derek Ashley Thomas
-      This program comes with ABSOLUTELY NO WARRANTY; for details run '$(basename $0) -l'.
-      This is free software, and you are welcome to redistribute it
-      under certain conditions; navigate to <http://www.gnu.org/licenses/gpl.html> for conditions.
+gitrack: keep track of multiple git repositories and check on their status compared to origin
+Copyright (C) 2012 Derek Ashley Thomas
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 EOF
 exit 
 }
@@ -357,8 +369,8 @@ function runGitRecorderHere(){
 }
 
 # split up the options
-shortOpts="cihplfmvqs:"
-longOpts="collect,help,info,license,push,fetch,merge,quiet,verbose,select:"
+shortOpts="cihplLfmvqs:"
+longOpts="collect,help,info,list,LICENSE,license,push,fetch,merge,quiet,verbose,select:"
 if ! opts=$(getopt -o $shortOpts --long $longOpts  -- $@) ; then
   printUsage 1
 fi
@@ -391,7 +403,7 @@ while [[ $# -gt 0 ]] ; do
       OPT_FECT=1
       shift 1
       ;;
-    -l | --license ) 
+    -L | --license | --LICENSE ) 
       printLicense
       ;;
     -m | --merge )  compared to origin
