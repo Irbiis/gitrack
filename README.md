@@ -18,34 +18,35 @@ The help info is easily available with the `--help` flag:
     gitrack Usage: gitrack [--logs-dir {directory}] [--logs-file {file-name}]
                            [-c] [-iflLmpqv] [-s {directory}]
     EXPLANATION
-        gitrack is a program designed to log and maintain several
-        git repositories collectively. This way you can push, fetch, and
+        gitrack is a program designed to log and maintain several git 
+        repositories collectively. This way you can push, fetch, and
         merge from multiple repositories in a row for several unrelated
         projects. It also makes it possible to share/sync multiple repos
         accross multiple computers quickly. A single log file is created
         for this: '\$LOGS_DIR/gitrack_record' [by default].
-  
+
         Make sure that LOGS_DIR is an environment variable set your shell
         startup file before running. You could also specify this directory
         by using the '--logs-dir' option.
-  
+
     OPTIONS
-        -c   --collect      collect [run in the parent directory]
-        -i   --info         print detailed information
+        -c   --collect      collect [run in a directory that contains one or more git repositories]
         -f   --fetch        fetch (clones the repository if not already)
+        -h   --help         this help text
+        -i   --info         print detailed information
         -l   --list         list all of the tracked repositories
         -L   --LICENSE      print license information
         -m   --merge        merge (clones the repository if not already)
         -p   --push         push
-        -q   --quiet        quiet mode [set by default]
+        -q   --quiet        quiet mode [default]
         -s   --select       select only a single given directory
         -v   --verbose      verbose mode
-  
+
         --logs-dir={dir}    override LOGS_DIR environment variable
         --logs-file={file}  specify the log file to read from [default: gitrack_record]
-  
+
     ENVIRONMENT
-        LOGS_DIR   A directory that holds log information. Can be an available environment variable
+        LOGS_DIR   A directory that holds log information. Must be an available environment variable
         ~/.colors  Can be a file that holds shell variables with color names. If available, it is sourced.
 
 ## Example 
