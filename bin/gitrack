@@ -1,5 +1,5 @@
 #!/bin/sh
-# gitrack: keep track of multiple git repositories and check on their status compared to origin
+# gitrack: keep track of multiple git repositories and projects with one command!
 # Copyright (C) 2012 Derek Ashley Thomas
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ exit $1
 }
 function printLicense(){
 cat - << EOF
-gitrack: keep track of multiple git repositories and check on their status compared to origin
+gitrack: keep track of multiple git repositories and projects with one command!
 Copyright (C) 2012 Derek Ashley Thomas
 
 This program is free software: you can redistribute it and/or modify
