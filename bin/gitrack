@@ -1,5 +1,5 @@
 #!/bin/sh
-# GIR: keep track of multiple git repositories and check on their status
+# gitrack: keep track of multiple git repositories and check on their status compared to origin
 # Copyright (C) 2012 Derek Ashley Thomas
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -24,13 +24,13 @@ inputstr="$@"
 # print the program usage and exit
 function printUsage(){
 cat - << EOF
-$(basename $0) Usage: gir [-c] [-ihl] [-s {directory}]
+$(basename $0) Usage: $(basename $0) [-c] [-ihl] [-s {directory}]
   EXPLANATION
       $(basename $0) is a program designed to log and maintain several 
       git repositories collectively. This way you can push and pull from
       multiple repos in a row for several unrelated projects. It also makes
       it possible to share/sync multiple repos accross multiple computers 
-      quickly. A single log file is created for this: \$LOGS_DIR/gir-git_record.
+      quickly. A single log file is created for this: \$LOGS_DIR/gitrack_record.
       
       Make sure that LOGS_DIR is an environment variable set your shell
       startup file before running.
@@ -38,10 +38,11 @@ $(basename $0) Usage: gir [-c] [-ihl] [-s {directory}]
   OPTIONS
       -c         collect [run in a directory that contains one or more git repositories]
       -i         information
-      -h         push (pull always performed before push if both selected)
-      -f         pull (pull always performed before push if both selected)
+      -f         fetch (pull always performed before push if both selected)
       -l         print license information
+      -m         merge 
       -n         negate the -q option
+      -p         push (pull always performed before push if both selected)
       -q         quiet mode (only prints if action were performed. Also, implied '-i')
       -s         select only a single given directory
 
@@ -53,7 +54,7 @@ exit $1
 }
 function printLicense(){
 cat - << EOF
-      GIR  Copyright (C) 2012 Derek Ashley Thomas
+      gitrack  Copyright (C) 2012 Derek Ashley Thomas
       This program comes with ABSOLUTELY NO WARRANTY; for details run '$(basename $0) -l'.
       This is free software, and you are welcome to redistribute it
       under certain conditions; navigate to <http://www.gnu.org/licenses/gpl.html> for conditions.
@@ -70,7 +71,7 @@ if [[ ! -n $LOGS_DIR ]] ; then
   echo "$(basename $0): LOGS_DIR is not yet set!" >&2
   printUsage 1
 else
-  logFile=$LOGS_DIR/gir-git_record
+  logFile=$LOGS_DIR/gitrack_record
   # check the size of the logfile
   unset NO_LOG
   if [[ $(cat $logFile 2> /dev/null | wc -l) -le 0 ]] ; then
@@ -224,7 +225,7 @@ echo "    * ${otherColor}others:   $others${NC}"
 popd > /dev/null
 }
 # pull function
-function pullhere(){
+function fetchhere(){
 if [[ -n $OPT_INFO && $numBehind -eq 0 ]] ; then
   return
 fi
@@ -235,7 +236,7 @@ if [[ -d $header ]] ; then
   echo "<--- pulling ... "
   cd $header
   { 
-    git pull && echo "${GREEN}pulled${NC}" 
+    git fetch && echo "${GREEN}pulled${NC}" 
   } || {
     echo "${ERROR_RED}*** not pulled ($header)$NC"
   }
@@ -313,7 +314,7 @@ function runGitRecorderHere(){
   fi
   # pulling
   if [[ -n $OPT_FECT ]] ; then
-    pullhere $url $header
+    fetchhere $url $header
   fi
   #pushing
   if [[ -n $OPT_PUSH ]] ; then
@@ -359,7 +360,7 @@ while [[ $# -gt 0 ]] ; do
     -l | --license ) 
       printLicense
       ;;
-    -m | --merge ) 
+    -m | --merge )  compared to origin
       errorNoLogs
       OPT_MERGE=1
       shift 1
