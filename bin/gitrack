@@ -108,7 +108,7 @@ if [[ "x$gitTop" != "x" ]] ; then
   # this is a git directory!
   grep "$gitTop" $logFile &> /dev/null
   if [[ $? -eq 1 ]] ; then
-    gitURL=$(git remote show origin | grep 'Push' | awk '{print $NF}' )
+    gitURL=$(git remote show origin 2> /dev/null | grep 'Push' | awk '{print $NF}' )
     if [[ "x$gitURL" != "x" ]] ; then
       echo "$(echo $gitURL | awk '{print $1}') $gitTop" >> $logFile
       echo "new > ${BLUE_BRIGHT}$(basename $gitTop)${NC}"
