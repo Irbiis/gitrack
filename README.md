@@ -92,8 +92,8 @@ do, but want it to do? Have a go and fork the heck out of it!
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
 # License
-**gitrack**: keep track of multiple git repositories and projects with one command!
-Copyright (C) 2012 **Derek Ashley Thomas**
+**gitrack**: keep track of multiple git repositories and projects with one command!  
+Copyright (C) 2012 Derek Ashley Thomas
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
