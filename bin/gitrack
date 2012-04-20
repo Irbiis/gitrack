@@ -45,7 +45,7 @@ $(basename $0) Usage: $(basename $0) [--logs-dir {directory}] [--logs-file {file
       -i   --info         print detailed information
       -l   --list         list all of the tracked repositories
       -L   --LICENSE      print license information
-      -m   --merge        merge (clones the repository if not already)
+      -m   --merge        merge (clones the repository if not already) [use with CAUTION]
       -p   --push         push
       -q   --quiet        quiet mode [default]
       -s   --select       select only a single given directory
@@ -276,7 +276,7 @@ if [[ -d $header ]] ; then
   echo "<--- pulling ... "
   cd $header
   { 
-    git merge && echo "${GREEN}merged${NC}" 
+    git merge origin/master && echo "${GREEN}merged${NC}" 
   } || {
     echo "${ERROR_RED}*** not merged ($header)$NC"
   }
