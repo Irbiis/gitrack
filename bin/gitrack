@@ -89,9 +89,9 @@ fi
 
 # print a readable list of our tracked repositories
 function printList(){
-printf "%-50s %-50s\n" "repository-directory" "origin-URL"
-printf "%-50s %-50s\n" "--------------------" "----------"
-cat $logFile | awk '{printf "%-50s %-50s\n",$2,$2}'
+printf "%-60s %-60s\n" "repository-directory" "origin-URL"
+printf "%-60s %-60s\n" "--------------------" "----------"
+cat $logFile | awk '{printf "%-60s %-60s\n",$1,$2}'
 
 }
 
@@ -276,7 +276,7 @@ if [[ -d $header ]] ; then
   echo "<--- pulling ... "
   cd $header
   { 
-    git merge && echo "${GREEN}merged${NC}" 
+    git merge origin/master && echo "${GREEN}merged${NC}" 
   } || {
     echo "${ERROR_RED}*** not merged ($header)$NC"
   }
